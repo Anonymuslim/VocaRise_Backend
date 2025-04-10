@@ -14,7 +14,7 @@ OUTPUT_FOLDER = "outputs"
 ALLOWED_EXTENSIONS = {'wav', 'mp3', 'm4a'}
 
 app = Flask(__name__, static_folder="frontend", static_url_path="")
-CORS(app, origins=["https://voca-rise-frontend.vercel.app"])
+CORS(app, resources={r"/api/*": {"origins": "https://voca-rise-frontend.vercel.app"}})
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
