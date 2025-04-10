@@ -1,4 +1,8 @@
-TTS
-torch
+# requirements.txt
+Flask
 pydub
-flask
+ffmpeg-python
+Werkzeug
+requests
+# installation directe de XTTS depuis GitHub
+git+https://github.com/coqui-ai/TTS.git
