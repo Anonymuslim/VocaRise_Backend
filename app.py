@@ -49,7 +49,7 @@ def clone_voice():
             print("✅ XTTS chargé")
 
         # Gestion des noms
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M")
         ext = os.path.splitext(file.filename)[1]
         filename = f"upload_{timestamp}{ext}"
         wav_filename = f"converted_{timestamp}.wav"
