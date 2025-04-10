@@ -5,6 +5,8 @@ from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
+from flask_cors import CORS
+CORS(app)
 
 # Initialisation
 UPLOAD_FOLDER = "uploads"

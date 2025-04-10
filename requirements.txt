@@ -4,5 +4,6 @@ pydub
 ffmpeg-python
 Werkzeug
 requests
+flask-cors
 # installation directe de XTTS depuis GitHub
 git+https://github.com/coqui-ai/TTS.git
