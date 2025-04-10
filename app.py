@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
 from flask_cors import CORS
-CORS(app)
+
 
 # Initialisation
 UPLOAD_FOLDER = "uploads"
@@ -14,6 +14,7 @@ OUTPUT_FOLDER = "outputs"
 ALLOWED_EXTENSIONS = {'wav', 'mp3', 'm4a'}
 
 app = Flask(__name__, static_folder="frontend", static_url_path="")
+CORS(app, origins=["https://voca-rise-frontend.vercel.app"])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
@@ -46,7 +47,7 @@ def clone_voice():
             tts = TTSModel(model_name="tts_models/multilingual/multi-dataset/xtts_v2", progress_bar=False, gpu=False)
             print("✅ XTTS prêt")
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M")
         ext = os.path.splitext(file.filename)[1]
         filename = f"upload_{timestamp}{ext}"
         wav_filename = f"converted_{timestamp}.wav"
