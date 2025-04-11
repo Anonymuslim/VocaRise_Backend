@@ -14,7 +14,7 @@ ALLOWED_EXTENSIONS = {'wav', 'mp3', 'm4a'}
 
 # Initialisation Flask
 app = Flask(__name__, static_folder="frontend", static_url_path="")
-CORS(app)  # Ou limiter comme: CORS(app, resources={r"/api/*": {"origins": "https://voca-rise-frontend.vercel.app"}})
+CORS(app)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
@@ -90,4 +90,5 @@ if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    print(f"✅ Flask running on port {port}")
+    app.run(host='0.0.0.0', port=port)
