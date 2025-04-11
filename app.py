@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
+from TTS.api import TTS
 
 # Config
 UPLOAD_FOLDER = "uploads"
@@ -44,14 +45,12 @@ def clone_voice():
         # Chargement unique du modèle
         if tts is None:
             print("🔁 Chargement XTTS v2...")
-            from TTS.api import TTS
             tts = TTS(
                 config_path="xtts_model/config.json",
                 model_path="xtts_model/model.pth",
                 progress_bar=False,
                 gpu=False
             )
-            print("✅ XTTS chargé")
 
         # Gestion des noms
         timestamp = datetime.now().strftime("%Y%m%d_%H%M")
