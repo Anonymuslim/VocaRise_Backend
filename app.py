@@ -44,8 +44,13 @@ def clone_voice():
         # Chargement unique du modèle
         if tts is None:
             print("🔁 Chargement XTTS v2...")
-            from TTS.api import TTS as TTSModel
-            tts = TTSModel(model_name="tts_models/multilingual/multi-dataset/xtts_v2", progress_bar=False, gpu=False)
+            from TTS.api import TTS
+            tts = TTS(
+                config_path="xtts_model/config.json",
+                model_path="xtts_model/model.pth",
+                progress_bar=False,
+                gpu=False
+            )
             print("✅ XTTS chargé")
 
         # Gestion des noms
