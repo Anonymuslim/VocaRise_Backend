@@ -1,51 +1,29 @@
+# 📁 Structure du backend YourTTS optimisé pour Railway
+
+# 1. 📄 app.py
 import os
-import uuid
-import zipfile
 import traceback
-from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from datetime import datetime
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
-import requests
+from TTS.api import TTS
 
-# ----------------------------- Configurations -----------------------------
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "outputs"
-MODEL_DIR = "xtts_model"
-MODEL_ZIP = "xtts_model.zip"
-MODEL_URL = "https://pixeldrain.com/u/vwrSh3nU"  # 🎯 Lien direct vers le zip du modèle
-
 ALLOWED_EXTENSIONS = {'wav', 'mp3', 'm4a'}
 
 app = Flask(__name__, static_folder="frontend", static_url_path="")
-CORS(app, origins=["https://voca-rise-frontend.vercel.app"])  # autoriser Vercel
-
+CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
-tts = None  # instance XTTS
+# 🔁 Chargement du modèle YourTTS une seule fois (lazy load)
+tts = None
 
-# ---------------------- Télécharger / Extraire modèle ---------------------
-def setup_model():
-    if not os.path.exists(MODEL_DIR):
-        print("📦 Téléchargement du modèle XTTS...")
-        with requests.get(MODEL_URL, stream=True) as r:
-            r.raise_for_status()
-            with open(MODEL_ZIP, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    f.write(chunk)
-
-        print("📂 Extraction du modèle...")
-        with zipfile.ZipFile(MODEL_ZIP, 'r') as zip_ref:
-            zip_ref.extractall(MODEL_DIR)
-
-        os.remove(MODEL_ZIP)
-        print("✅ Modèle XTTS prêt.")
-    else:
-        print("🔎 Modèle XTTS déjà disponible.")
-
-# ----------------------------- Routes Flask -----------------------------
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
 def index():
@@ -53,7 +31,6 @@ def index():
 
 @app.route('/api/clone-voice', methods=['POST'])
 def clone_voice():
-    print("Bonjour!!!!")
     global tts
     try:
         if 'audio' not in request.files or 'text' not in request.form:
@@ -65,18 +42,11 @@ def clone_voice():
         if file.filename == '' or not allowed_file(file.filename):
             return jsonify({'error': 'Format de fichier non autorisé'}), 400
 
-        # Charger XTTS si non chargé
         if tts is None:
-            setup_model()
-            from TTS.api import TTS as TTSModel
-            tts = TTSModel(
-                config_path=os.path.join(MODEL_DIR, "config.json"),
-                model_path=os.path.join(MODEL_DIR, "model.pth"),
-                progress_bar=False,
-                gpu=False
-            )
+            print("🔁 Chargement YourTTS...")
+            tts = TTS(model_name="tts_models/multilingual/multi-dataset/your_tts", progress_bar=False, gpu=False)
+            print("✅ YourTTS prêt")
 
-        # Préparer les chemins
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         ext = os.path.splitext(file.filename)[1]
         filename = f"upload_{timestamp}{ext}"
@@ -94,8 +64,11 @@ def clone_voice():
         tts.tts_to_file(
             text=text + ".",
             speaker_wav=wav_path,
-            language="fr",
-            file_path=output_path
+            language="fr-fr",
+            file_path=output_path,
+            temperature=0.15,
+            speed=0.93,
+            speaker_embedding=None
         )
 
         final_audio = AudioSegment.from_file(output_path)
@@ -112,10 +85,6 @@ def clone_voice():
 def get_audio(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# ------------------------- Lancer l'app Flask -------------------------
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
