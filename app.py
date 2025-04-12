@@ -53,6 +53,7 @@ def index():
 
 @app.route('/api/clone-voice', methods=['POST'])
 def clone_voice():
+    print("Bonjour!!!!")
     global tts
     try:
         if 'audio' not in request.files or 'text' not in request.form:
