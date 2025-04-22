@@ -1,8 +1,0 @@
-{
-    "build": {
-      "installCommand": "pip install -r requirements.txt"
-    },
-    "start": {
-      "cmd": "python app.py"
-    }
-  }
