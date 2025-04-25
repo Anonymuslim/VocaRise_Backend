@@ -74,6 +74,7 @@ def clone_voice():
         final_audio = AudioSegment.from_file(output_path)
         final_audio += AudioSegment.silent(duration=1000)
         final_audio.export(output_path, format="mp3")
+        print(f"Fichier audio cloné généré à l'emplacement : {output_path}")
 
         return jsonify({'success': True, 'audio_url': f'/api/audio/{output_name}'})
 
