@@ -71,12 +71,19 @@ def clone_voice():
             speaker_embedding=None
         )
 
+        # Vérifie si le dossier OUTPUT_FOLDER est accessible en lecture et en écriture
+        if os.access(app.config['OUTPUT_FOLDER'], os.R_OK | os.W_OK):
+            print(f"Le dossier {app.config['OUTPUT_FOLDER']} est accessible en lecture et en écriture.")
+        else:
+            print(f"Le dossier {app.config['OUTPUT_FOLDER']} n'est pas accessible en lecture et/ou en écriture.")
+
+
         final_audio = AudioSegment.from_file(output_path)
         final_audio += AudioSegment.silent(duration=1000)
         final_audio.export(output_path, format="mp3")
         print(f"Fichier audio cloné généré à l'emplacement : {output_path}")
 
-        return jsonify({'success': True, 'audio_url': f'/api/audio/{output_name}'})
+        return jsonify({'success': True, 'audio_url': f'https://vocarise-backend-production.up.railway.app/api/audio/{output_name}'})
 
     except Exception as e:
         traceback.print_exc()
