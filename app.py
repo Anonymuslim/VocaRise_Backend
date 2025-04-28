@@ -83,7 +83,7 @@ def clone_voice():
         final_audio.export(output_path, format="mp3")
         print(f"Fichier audio cloné généré à l'emplacement : {output_path}")
 
-        return jsonify({'success': True, 'audio_url': f'https://vocarise-backend-production.up.railway.app/api/audio/{output_name}'})
+        return jsonify({'success': True, 'audio_url': f'https://vocarisebackend-production.up.railway.app/api/audio/{output_name}'})
 
 
     except Exception as e:
